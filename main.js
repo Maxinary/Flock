@@ -102,10 +102,10 @@ function frontDist(y){
 class Being{
   constructor(position, moveFn){
     //constants
-    this.maxTurn = 0.05;
-    this.maxSpeed = 0.007;
-	  this.minSpeed = 0.007;
-    this.maxDeltaSpeed = 0.0001;
+    this.maxTurn = 0.04;
+    this.maxSpeed = 6;
+	  this.minSpeed = 6;
+    this.maxDeltaSpeed = 1;
 	
 	  //others
 	  this.position = position;
@@ -121,9 +121,8 @@ class Being{
     this.forward();
     this.turn(movement[1]);
     
-    for(var i in this.position){
-      this.position[i] = modulus(this.position[i], 1);
-    }
+    this.position[0] = modulus(this.position[0], document.body.clientWidth);
+    this.position[1] = modulus(this.position[1], document.body.clientHeight);
   }
   
   turn(theta){
@@ -174,20 +173,20 @@ function boid(worldState){
         localPositions.push(worldState.beings[i].position);
       }else{
         localPositions.push([
-          worldState.beings[i].position[0]+Math.cos(worldState.beings[i].angle)*0.1,
-          worldState.beings[i].position[1]+Math.sin(worldState.beings[i].angle)*0.1]);
+          worldState.beings[i].position[0]+Math.cos(worldState.beings[i].angle)*50,
+          worldState.beings[i].position[1]+Math.sin(worldState.beings[i].angle)*50]);
       }
     }
   }
   
-  var distWeightArr = apply(frontDist(0.2), localDistances);
+  var distWeightArr = apply(frontDist(160), localDistances);
   var avgLoc = averagePos(localPositions, distWeightArr);
   var centerTurn = angleDif(this.angle, Math.atan2(avgLoc[1] - this.position[1], avgLoc[0] - this.position[0]));
 
-  var turnWeightArr = apply(frontDist(0.1), localDistances);
+  var turnWeightArr = apply(frontDist(80), localDistances);
   var agreementTurn = angleDif(this.angle, averageAngle(localTurnings, turnWeightArr));
 
-  var superClose = apply(frontDist(0.04), localDistances);
+  var superClose = apply(frontDist(30), localDistances);
   var avgVcloseLoc = averagePos(localPositions, superClose);
   var sCloseTurn = angleDif(this.angle, Math.atan2(avgVcloseLoc[1] - this.position[1], avgVcloseLoc[0] - this.position[0]));
   
@@ -203,20 +202,19 @@ class WorldState{
     this.beings = [];
     this.averagePos = [0.5,0.5];
     
-    this.drawSize = 0.015;
+    this.drawSize = 10;
   }
   
   draw(){
-    ctx.clearRect(0,0,1000,1000);
-    ctx.strokeRect(0,0,400,400);
-    
+    ctx.clearRect(0,0,document.body.clientWidth,document.body.clientHeight);
+
     for(var i in this.beings){
       var b = this.beings[i];
       
       ctx.beginPath();
-      ctx.moveTo(b.position[0]*400 + Math.cos(b.angle)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle)*this.drawSize*400);
-      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI*5/7)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*3/4)*this.drawSize*400);
-      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI*9/7)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*5/4)*this.drawSize*400);
+      ctx.moveTo(b.position[0] + Math.cos(b.angle)*this.drawSize, b.position[1] + Math.sin(b.angle)*this.drawSize);
+      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*5/7)*this.drawSize, b.position[1] + Math.sin(b.angle + Math.PI*3/4)*this.drawSize);
+      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*9/7)*this.drawSize, b.position[1] + Math.sin(b.angle + Math.PI*5/4)*this.drawSize);
       
       ctx.closePath();
       ctx.fillStyle = "#FF0000";
@@ -228,9 +226,6 @@ class WorldState{
 var canvas = document.getElementById("draw");
 var ctx = canvas.getContext("2d");
 var world = new WorldState(ctx);
-for(var i=0;i<100;i++){
-  world.beings.push(new Being([Math.random(), Math.random()], boid));
-}
 
 function tick(){
   requestAnimationFrame(tick);
@@ -242,4 +237,7 @@ function tick(){
   world.draw();
 }
 
-window.onload = function(){resize(); tick();};
+window.onload = function(){
+  for(var i=0;i<100;i++){
+    world.beings.push(new Being([Math.random()*document.body.clientWidth, Math.random()*document.body.clientHeight], boid));
+  }resize(); tick();};
