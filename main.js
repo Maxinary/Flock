@@ -167,29 +167,29 @@ function boid(worldState){
   var localDistances = [];
   for(var i in worldState.beings){
     var ang = Math.atan2(worldState.beings[i].position[1]-this.position[1], worldState.beings[i].position[0]-this.position[0]);
-    if(Math.abs(ang) < Math.PI/2){
+    if(Math.abs(ang-this.angle) < Math.PI/2 || ang == 0){
       localDistances.push(dist(worldState.beings[i].position, this.position));
       localTurnings.push(worldState.beings[i].angle);
       if(worldState.beings[i] != this){
         localPositions.push(worldState.beings[i].position);
       }else{
         localPositions.push([
-          worldState.beings[i].position[0]+Math.cos(worldState.beings[i].angle)*0.01,
-          worldState.beings[i].position[1]+Math.sin(worldState.beings[i].angle)*0.01]);
+          worldState.beings[i].position[0]+Math.cos(worldState.beings[i].angle)*0.1,
+          worldState.beings[i].position[1]+Math.sin(worldState.beings[i].angle)*0.1]);
       }
     }
   }
   
   var distWeightArr = apply(frontDist(0.2), localDistances);
-  var avgLoc = averagePos(localPositions, distWeightArr, true);
-  var centerTurn = angleDif(this.angle, Math.atan2(avgLoc[0][1] - this.position[1], avgLoc[0][0] - this.position[0]));
+  var avgLoc = averagePos(localPositions, distWeightArr);
+  var centerTurn = angleDif(this.angle, Math.atan2(avgLoc[1] - this.position[1], avgLoc[0] - this.position[0]));
 
   var turnWeightArr = apply(frontDist(0.1), localDistances);
   var agreementTurn = angleDif(this.angle, averageAngle(localTurnings, turnWeightArr));
 
   var superClose = apply(frontDist(0.04), localDistances);
-  var avgVcloseLoc = averagePos(localPositions, superClose, true);
-  var sCloseTurn = angleDif(this.angle, Math.atan2(avgVcloseLoc[0][1] - this.position[1], avgVcloseLoc[0][0] - this.position[0]));
+  var avgVcloseLoc = averagePos(localPositions, superClose);
+  var sCloseTurn = angleDif(this.angle, Math.atan2(avgVcloseLoc[1] - this.position[1], avgVcloseLoc[0] - this.position[0]));
   
   move[1] = averageAngle([centerTurn, agreementTurn, -sCloseTurn], [2, 2, 3]);
 
@@ -215,8 +215,8 @@ class WorldState{
       
       ctx.beginPath();
       ctx.moveTo(b.position[0]*400 + Math.cos(b.angle)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle)*this.drawSize*400);
-      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI/2)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*3/4)*this.drawSize*400);
-      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI*3/2)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*5/4)*this.drawSize*400);
+      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI*5/7)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*3/4)*this.drawSize*400);
+      ctx.lineTo(b.position[0]*400 + Math.cos(b.angle + Math.PI*9/7)*this.drawSize*400, b.position[1]*400 + Math.sin(b.angle + Math.PI*5/4)*this.drawSize*400);
       
       ctx.closePath();
       ctx.fillStyle = "#FF0000";
