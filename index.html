@@ -10,9 +10,16 @@
     };
   </script>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body onresize="resize();">
   <canvas id="draw"></canvas>
+  <div id="options">
+    Background Color:<input id="bgclr" type="color" value="#FFFFFF">
+    <br />
+    Fish Color: <input id="boidclr" type="color" value="#FF0000">
+    <br />
+  </div>
   <script src="main.js"></script>
 </body>
 </html>
