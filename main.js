@@ -166,7 +166,7 @@ function boid(worldState){
   var localDistances = [];
   for(var i in worldState.beings){
     var ang = Math.atan2(worldState.beings[i].position[1]-this.position[1], worldState.beings[i].position[0]-this.position[0]);
-    if(Math.abs(ang-this.angle) < Math.PI/2 || ang == 0){
+    if(Math.abs(angleDif(this.angle, ang)) < Math.PI/2 || ang == 0){
       localDistances.push(dist(worldState.beings[i].position, this.position));
       localTurnings.push(worldState.beings[i].angle);
       if(worldState.beings[i] != this){
@@ -190,9 +190,13 @@ function boid(worldState){
   var avgVcloseLoc = averagePos(localPositions, superClose);
   var sCloseTurn = angleDif(this.angle, Math.atan2(avgVcloseLoc[1] - this.position[1], avgVcloseLoc[0] - this.position[0]));
   
-  move[1] = averageAngle([centerTurn, agreementTurn, -sCloseTurn], [2, 2, 3]);
-
-  move[0] = -Math.abs(move[1])*0.0005+0.0004;
+  if(isMouseDown){
+    move[1] = averageAngle([centerTurn, agreementTurn, -sCloseTurn, angleDif(this.angle, Math.atan2(mousePos[1]-this.position[1],mousePos[0]-this.position[0]))], [2, 2, 3, 2]);
+  }else{
+    move[1] = averageAngle([centerTurn, agreementTurn, -sCloseTurn], [2, 2, 3]);
+  }
+  
+  move[0] = -Math.abs(move[1])*0.0005+0.0003;
   return move;
 }
 
@@ -242,6 +246,13 @@ function tick(){
   
   world.draw();
 }
+
+var isMouseDown = false;
+var mousePos = [];
+
+document.onmousedown = function(event){isMouseDown = true; mousePos = [event.x, event.y];};
+document.onmouseup = function(event){isMouseDown = false;};
+document.onmousemove = function(){if(isMouseDown){mousePos = [event.x, event.y];}};
 
 window.onload = function(){
   for(var i=0;i<100;i++){
