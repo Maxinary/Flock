@@ -251,8 +251,15 @@ var isMouseDown = false;
 var mousePos = [];
 
 document.onmousedown = function(event){isMouseDown = true; mousePos = [event.x, event.y];};
+document.ontouchstart = function(event){isMouseDown = true; mousePos = [event.x, event.y];};
+
 document.onmouseup = function(event){isMouseDown = false;};
+document.ontouchend = function(event){isMouseDown = false;};
+
 document.onmousemove = function(){if(isMouseDown){mousePos = [event.x, event.y];}};
+document.ontouchmove = function(){if(isMouseDown){mousePos = [event.x, event.y];}};
+
+
 
 window.onload = function(){
   for(var i=0;i<100;i++){
