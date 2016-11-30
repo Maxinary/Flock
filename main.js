@@ -250,14 +250,14 @@ function tick(){
 var isMouseDown = false;
 var mousePos = [];
 
-document.onmousedown = function(event){isMouseDown = true; mousePos = [event.x, event.y];};
-document.ontouchstart = function(event){isMouseDown = true; mousePos = [event.x, event.y];};
+document.onmousedown = function(event){isMouseDown = true; mousePos = [event.pageX, event.pageY];};
+document.ontouchstart = function(event){isMouseDown = true; mousePos = [event.pageX, event.pageY];};
 
 document.onmouseup = function(event){isMouseDown = false;};
 document.ontouchend = function(event){isMouseDown = false;};
 
-document.onmousemove = function(){if(isMouseDown){mousePos = [event.x, event.y];}};
-document.ontouchmove = function(){if(isMouseDown){mousePos = [event.x, event.y];}};
+document.onmousemove = function(){if(isMouseDown){mousePos = [event.pageX, event.pageY];}};
+document.ontouchmove = function(){if(isMouseDown){mousePos = [event.pageX, event.pageY];}};
 
 
 
