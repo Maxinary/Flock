@@ -106,7 +106,7 @@ class Being{
     this.maxSpeed = 6;
 	  this.minSpeed = 6;
     this.maxDeltaSpeed = 1;
-	
+
 	  //others
 	  this.position = position;
     this.moveFn = moveFn;
@@ -206,7 +206,10 @@ class WorldState{
   }
   
   draw(){
-    ctx.clearRect(0,0,document.body.clientWidth,document.body.clientHeight);
+    ctx.fillStyle = bgColorElem.value;
+    ctx.fillRect(0,0,document.body.clientWidth,document.body.clientHeight);
+    
+    var color = boidColorElem.value;
 
     for(var i in this.beings){
       var b = this.beings[i];
@@ -217,7 +220,7 @@ class WorldState{
       ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*9/7)*this.drawSize, b.position[1] + Math.sin(b.angle + Math.PI*5/4)*this.drawSize);
       
       ctx.closePath();
-      ctx.fillStyle = "#FF0000";
+      ctx.fillStyle = color;
       ctx.fill();
     }
   }
@@ -226,6 +229,9 @@ class WorldState{
 var canvas = document.getElementById("draw");
 var ctx = canvas.getContext("2d");
 var world = new WorldState(ctx);
+
+var bgColorElem;
+var boidColorElem;
 
 function tick(){
   requestAnimationFrame(tick);
@@ -240,4 +246,10 @@ function tick(){
 window.onload = function(){
   for(var i=0;i<100;i++){
     world.beings.push(new Being([Math.random()*document.body.clientWidth, Math.random()*document.body.clientHeight], boid));
-  }resize(); tick();};
+  }
+  bgColorElem = document.getElementById("bgclr");
+  boidColorElem = document.getElementById("boidclr");
+
+  resize();
+  tick();
+};
