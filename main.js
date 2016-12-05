@@ -137,8 +137,8 @@ class Being{
   }
   
   forward(){
-    this.position[0] += this.speed*Math.cos(this.angle);
-    this.position[1] += this.speed*Math.sin(this.angle);
+    this.position[0] += this.speed*Math.cos(this.angle)*sizeMod;
+    this.position[1] += this.speed*Math.sin(this.angle)*sizeMod;
   }
   
   changeSpeed(delta){
@@ -179,14 +179,14 @@ function boid(worldState){
     }
   }
   
-  var distWeightArr = apply(frontDist(160), localDistances);
+  var distWeightArr = apply(frontDist(160*sizeMod), localDistances);
   var avgLoc = averagePos(localPositions, distWeightArr);
   var centerTurn = angleDif(this.angle, Math.atan2(avgLoc[1] - this.position[1], avgLoc[0] - this.position[0]));
 
-  var turnWeightArr = apply(frontDist(80), localDistances);
+  var turnWeightArr = apply(frontDist(80*sizeMod), localDistances);
   var agreementTurn = angleDif(this.angle, averageAngle(localTurnings, turnWeightArr));
 
-  var superClose = apply(frontDist(30), localDistances);
+  var superClose = apply(frontDist(30*sizeMod), localDistances);
   var avgVcloseLoc = averagePos(localPositions, superClose);
   var sCloseTurn = angleDif(this.angle, Math.atan2(avgVcloseLoc[1] - this.position[1], avgVcloseLoc[0] - this.position[0]));
   
@@ -219,9 +219,9 @@ class WorldState{
       var b = this.beings[i];
       
       ctx.beginPath();
-      ctx.moveTo(b.position[0] + Math.cos(b.angle)*this.drawSize, b.position[1] + Math.sin(b.angle)*this.drawSize);
-      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*5/7)*this.drawSize, b.position[1] + Math.sin(b.angle + Math.PI*3/4)*this.drawSize);
-      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*9/7)*this.drawSize, b.position[1] + Math.sin(b.angle + Math.PI*5/4)*this.drawSize);
+      ctx.moveTo(b.position[0] + Math.cos(b.angle)*this.drawSize*sizeMod, b.position[1] + Math.sin(b.angle)*this.drawSize*sizeMod);
+      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*5/7)*this.drawSize*sizeMod, b.position[1] + Math.sin(b.angle + Math.PI*3/4)*this.drawSize*sizeMod);
+      ctx.lineTo(b.position[0] + Math.cos(b.angle + Math.PI*9/7)*this.drawSize*sizeMod, b.position[1] + Math.sin(b.angle + Math.PI*5/4)*this.drawSize*sizeMod);
       
       ctx.closePath();
       ctx.fillStyle = color;
@@ -250,6 +250,8 @@ function tick(){
 var isMouseDown = false;
 var mousePos = [];
 
+var sizeMod = 1;
+
 document.onmousedown = function(event){isMouseDown = true; mousePos = [event.pageX, event.pageY];};
 document.ontouchstart = function(event){isMouseDown = true; mousePos = [event.pageX, event.pageY];};
 
@@ -259,7 +261,8 @@ document.ontouchend = function(event){isMouseDown = false;};
 document.onmousemove = function(){if(isMouseDown){mousePos = [event.pageX, event.pageY];}};
 document.ontouchmove = function(){if(isMouseDown){mousePos = [event.pageX, event.pageY];}};
 
-
+var slider = document.getElementById("boidSize");
+slider.onchange = function(){sizeMod = Math.pow(2, slider.value);};
 
 window.onload = function(){
   for(var i=0;i<100;i++){
